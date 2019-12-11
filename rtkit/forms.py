@@ -3,6 +3,8 @@ import os
 import re
 import urllib
 
+from io import IOBase
+
 CRLF = '\r\n'
 BOUNDARY = 'xXXxXXyYYzzz'
 
@@ -68,7 +70,7 @@ class BoundaryItem(object):
             filetype = to_bytestring(filetype)
         self.filetype = filetype
 
-        if isinstance(value, file) and filesize is None:
+        if isinstance(value, IOBase) and filesize is None:
             try:
                 value.flush()
             except IOError:
@@ -159,22 +161,22 @@ def _content_encode(value, quote=False):
         value['Text'] = '\n '.join(value['Text'].splitlines())
         if quote:
             value['Text'] = url_quote(value['Text'])
-    return '\n'.join(['{0}: {1}'.format(k, v) for k, v in value.iteritems()])
+    return '\n'.join(['{0}: {1}'.format(k, v) for k, v in value.items()])
 
 
 def url_quote(s, charset='utf-8', safe='/:'):
     """URL encode a single string with a given encoding."""
-    if isinstance(s, unicode):
+    if isinstance(s, str):
         s = s.encode(charset)
-    elif not isinstance(s, str):
+    elif not isinstance(s, bytes):
         s = str(s)
-    return urllib.quote_plus(s, safe=safe)
+    return urllib.parse.quote_plus(s, safe=safe)
 
 
 def to_bytestring(s):
     if not isinstance(s, basestring):
         raise TypeError("value should be a str or unicode")
 
-    if isinstance(s, unicode):
+    if isinstance(s, str):
         return s.encode('utf-8')
     return s

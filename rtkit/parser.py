@@ -1,6 +1,7 @@
 try:
     from itertools import filterfalse as ifilterfalse
-    from cStringIO import StringIO
+    # from cStringIO import StringIO
+    from io import StringIO
 except ImportError:
     from itertools import ifilterfalse
     from io import StringIO
